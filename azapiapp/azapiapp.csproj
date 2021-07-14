@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="5.0.5" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.10.1" />
@@ -37,6 +38,10 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
+    <Folder Include="Warehouse\" />
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Properties\ServiceDependencies\" />
+    <Folder Include="Supermarket\Services\" />
   </ItemGroup>
 
 

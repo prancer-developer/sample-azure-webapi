@@ -1,4 +1,12 @@
 
+using AutoMapper;
+using azapiapp.Supermarket.Domain.Repositories;
+using azapiapp.Supermarket.Domain.Services;
+using azapiapp.Supermarket.Persistence.Contexts;
+using azapiapp.Supermarket.Persistence.Repositories;
+using azapiapp.Supermarket.Services;
+using azapiapp.Warehouse.Controllers;
+using azapiapp.Warehouse.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using System;
@@ -34,13 +43,37 @@ namespace azapiapp
         //----------------------------------------------------------------------------------------------------------
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 
             services.AddControllers();
 
-            services.AddDbContext<Models.TodoContext>(opt =>
+            services.AddDbContext<ToDo.TodoContext>(opt =>
                                                opt.UseInMemoryDatabase("TodoList"));
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseInMemoryDatabase(Configuration.GetConnectionString("memory"));
+            });
+
+            services.AddDbContext<WideWorldImportersDbContext>(builder =>
+            {
+                builder.UseInMemoryDatabase("warehouse");
+            });
+
+            // Set up dependency injection for controller's logger
+            services.AddScoped<ILogger, Logger<WarehouseController>>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+
+            services.AddAutoMapper(typeof(Startup));
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
